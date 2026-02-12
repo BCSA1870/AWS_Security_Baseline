@@ -1,0 +1,20 @@
+# 1. Enable Security Hub
+resource "aws_securityhub_account" "main" {}
+
+# 2. Subscribe to CIS Foundations Benchmark (v1.4.0)
+resource "aws_securityhub_standards_subscription" "cis" {
+  depends_on    = [aws_securityhub_account.main]
+  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.4.0"
+}
+
+# 3. Hardened IAM Password Policy (CIS Control 1.5 - 1.11)
+resource "aws_iam_account_password_policy" "strict" {
+  minimum_password_length        = 14
+  require_lowercase_characters   = true
+  require_numbers               = true
+  require_uppercase_characters   = true
+  require_symbols               = true
+  allow_users_to_change_password = true
+  password_reuse_prevention      = 24
+  max_password_age              = 90
+}
